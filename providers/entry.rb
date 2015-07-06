@@ -18,6 +18,13 @@ def load_current_resource
     new_resource.value([i.private_ip_address])
     new_resource.type('A')
   end
+  unless new_resource.eip.nil?
+    /(.+)@(.+)@(.+)/ =~ new_resource.eip
+    i = Chef::AwsEc2.get_instance($1, Chef::AwsEc2.get_subnet(Chef::AwsEc2.get_vpc($3, Chef::AwsEc2.get_client(aws_credentials, aws_region)), $2))
+    fail "Instance '#{new_resource.instance}' not found" if i.nil?
+    new_resource.value(i.vpc_addresses.map{|a| a.public_ip})
+    new_resource.type('A')
+  end
   unless new_resource.elb.nil?
     /(.+)@(.+)/ =~ new_resource.elb
     e = Chef::AwsEc2.get_elb($1, Chef::AwsEc2.get_elb_client(aws_credentials, aws_region))

@@ -9,6 +9,8 @@ attribute :ttl, kind_of: Integer, default: 300, required: true, callbacks: {
 }
 attribute :domain, kind_of: String
 attribute :value, kind_of: [String, Array]
+attribute :instance, kind_of: String
+attribute :elb, kind_of: String
 attribute :alias_to, kind_of: String
 attribute :region, kind_of: String
 attribute :access_key_id, kind_of: String
@@ -22,5 +24,7 @@ end
 
 def after_created
   value [@value] if @value.instance_of? String
+  fail 'Only one of \'value\', \'instance\' or \'elb\' can be used' if [@value, @instance, @elb].count{|x| !x.nil?} > 1
+  fail "Error instance name: '#{instance}'. It must be <name@subnet@vpc>" unless @instance.nil? or /.+@.+@.+/ =~ @instance
 end
 

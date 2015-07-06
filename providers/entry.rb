@@ -11,6 +11,20 @@ def load_current_resource
   current_resource.client = Chef::AwsEc2.get_route53_client(aws_credentials, aws_region)
   current_resource.zone = get_zone(new_resource.domain.nil? ? new_resource.name : new_resource.name + '.' + new_resource.domain)
   fail "Zone '#{new_resource.domain.nil? ? new_resource.name : new_resource.name + '.' + new_resource.domain}' not found" if current_resource.zone.nil?
+  unless new_resource.instance.nil?
+    /(.+)@(.+)@(.+)/ =~ new_resource.instance
+    i = Chef::AwsEc2.get_instance($1, Chef::AwsEc2.get_subnet(Chef::AwsEc2.get_vpc($3, Chef::AwsEc2.get_client(aws_credentials, aws_region)), $2))
+    fail "Instance '#{new_resource.instance}' not found" if i.nil?
+    new_resource.value([i.private_ip_address])
+    new_resource.type('A')
+  end
+  unless new_resource.elb.nil?
+    /(.+)@(.+)/ =~ new_resource.elb
+    e = Chef::AwsEc2.get_elb($1, Chef::AwsEc2.get_elb_client(aws_credentials, aws_region))
+    fail "ELB '#{new_resource.elb}' not found" if e.nil?
+    new_resource.value([e.dns_name])
+    new_resource.type('CNAME')
+  end
   current_resource.entry = get_entry(new_resource.name, new_resource.type)
 end
 

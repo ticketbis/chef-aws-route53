@@ -25,7 +25,7 @@ end
 
 def after_created
   value [@value] if @value.instance_of? String
-  fail 'Only one of \'value\', \'instance\', \'eip\' or \'elb\' can be used' if [@value, @instance, @elb].count{|x| !x.nil?} > 1
+  fail 'Only one of \'value\', \'instance\', \'eip\' or \'elb\' can be used' if [@value, @instance, @eip, @elb].count{|x| !x.nil?} > 1
   fail "Error instance name: '#{instance}'. It must be <name@subnet@vpc>" unless @instance.nil? or /.+@.+@.+/ =~ @instance
   fail "Error EIP name: '#{eip}'. It must be <name@subnet@vpc>" unless @eip.nil? or /.+@.+@.+/ =~ @eip
 end

@@ -1,9 +1,13 @@
 name 'aws-route53'
-maintainer 'The Authors'
-maintainer_email 'you@example.com'
-license 'all_rights'
-description 'Installs/Configures aws-route53'
-long_description 'Installs/Configures aws-route53'
+maintainer 'Alberto Tablado'
+maintainer_email 'alberto.tablad@ticketbis.com'
+license 'GPL v3'
+source_url 'https://github.com/ticketbis/chef-aws-route53'
+description 'Manage Route53 entries'
+long_description IO.read(File.join(
+  File.dirname(__FILE__), 'README.md'
+  )
+)
 version '0.1.0'
 
 depends 'aws-base'

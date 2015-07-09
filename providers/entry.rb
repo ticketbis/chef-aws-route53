@@ -26,8 +26,7 @@ def load_current_resource
     new_resource.type('A')
   end
   unless new_resource.elb.nil?
-    /(.+)@(.+)/ =~ new_resource.elb
-    e = Chef::AwsEc2.get_elb($1, Chef::AwsEc2.get_elb_client(aws_credentials, aws_region))
+    e = Chef::AwsEc2.get_elb(new_resource.elb, Chef::AwsEc2.get_elb_client(aws_credentials, aws_region))
     fail "ELB '#{new_resource.elb}' not found" if e.nil?
     new_resource.value([e.dns_name])
     new_resource.type('CNAME')
